@@ -11,6 +11,8 @@
 #include "seal/version.h"
 #include "seal/util/common.h"
 #include "seal/util/defines.h"
+#include "seal/util/polycore.h"
+#include "seal/util/ztools.h"
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>

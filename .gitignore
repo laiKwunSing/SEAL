@@ -632,3 +632,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# CLion
+*.idea/
+SEAL.cbp
+native/examples/SEALExamples.cbp
