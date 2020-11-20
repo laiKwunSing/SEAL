@@ -11,6 +11,8 @@
 #include "seal/version.h"
 #include "seal/util/common.h"
 #include "seal/util/defines.h"
+#include "seal/util/polycore.h"
+#include "seal/util/ztools.h"
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -451,6 +453,32 @@ namespace seal
             return (
                 !data_.size() || (size_ < SEAL_CIPHERTEXT_SIZE_MIN) ||
                 std::all_of(data(1), data_.cend(), util::is_zero<ct_coeff_type>));
+        }
+
+        /**
+        The returned string is of the form "7FFx^3 + 1x^1 + 3" with a format
+        summarized by the following:
+        1. Terms are listed in order of strictly decreasing exponent
+        2. Coefficient values are non-negative and in hexadecimal format (hexadecimal letters are in upper-case)
+        3. Exponents are positive and in decimal format
+        4. Zero coefficient terms (including the constant term) are omitted unless
+        the polynomial is exactly 0 (see rule 9)
+        5. Term with the exponent value of one is written as x^1
+        6. Term with the exponent value of zero (the constant term) is written as
+        just a hexadecimal number without x or exponent
+        7. Terms are separated exactly by <space>+<space>
+        8. Other than the +, no other terms have whitespace
+        9. If the polynomial is exactly 0, the string "0" is returned
+
+        @throws std::invalid_argument if the plaintext is in NTT transformed form
+        */
+        SEAL_NODISCARD inline std::string to_string() const
+        {
+            if (is_ntt_form())
+            {
+                throw std::invalid_argument("cannot convert NTT transformed plaintext to string");
+            }
+            return util::poly_to_hex_string(data_.cbegin(), data_.size(), 1);
         }
 
         /**
